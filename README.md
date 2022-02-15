@@ -3,4 +3,4 @@
 
 # Gifs
  ![](https://github.com/Haaris-Rahman/K-Means-Clustering/blob/main/Media/3D-Split.gif)
- ![](https://github.com/Haaris-Rahman/K-Means-Clustering/blob/main/Media/3D-Split-OG.gif)
+ ![](https://github.com/Haaris-Rahman/K-Means-Clustering/blob/main/Media/3D-Split-OG.gif | width=240)
