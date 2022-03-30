@@ -74,7 +74,7 @@ class KMeans:
             :return: Centroids of k clusters (internally)
         '''
 
-        assert X is not None
+        assert X is None
 
         if isinstance(X, list):
             X = np.array(X)
