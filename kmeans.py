@@ -67,6 +67,20 @@ class KMeans:
         return self.centroids
 
     def _kmeans(self, X):
+        """
+        The _kmeans function is a helper function that is used to train the KMeans algorithm. It takes in an input of
+        the training data and then iterates through a maximum number of iterations, or until the centroids converge. The 
+        centroids are initialized randomly, and then each iteration consists of finding the distance between each point 
+        and every centroid, assigning points to their closest cluster center (according to Euclidean distance), and finally 
+        recomputing all cluster centers based on those assignments.
+        
+        :param self: Used to Access variables that belongs to the class.
+        :param X: Used to Pass the input samples.
+        :return: The centroids of the clusters.
+        
+        :doc-author: Trelent
+        """
+        
         '''
             Training algorithm of KMeans. If a cluster has no samples, randomly reinitialize a new centroid
             :param X: Input samples of size n x d; n is the number of training samples, d is the dimension of input
