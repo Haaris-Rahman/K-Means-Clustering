@@ -1,137 +1,114 @@
-# Example code to demonstrate use of the library
-
-from kmeans import KMeans
+import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import pyplot as plt
 
 
-def plot_1D(samples, test_split):
+def plot(centroids, X_train, X_test=None, y_train=None, y_test=None, projection=False):
+    """
+    Plots the data points and centroids of the clusters for the kmeans library
+    :param centroids: The centroids obtained after kmeans training
+    :type centroids: np.ndarray
+    :param X_train: The training set, a numpy array of shape (N, D) containing N examples with D dimensions
+    :type X_train: list or np.ndarray
+    :param X_test: (Optional) The testing set, a numpy array of shape (N, D) containing N examples with D dimensions
+    :type X_test: list or np.ndarray
+    :param y_train: (Optional) Label of cluster for each training sample
+    :type y_train: list or np.ndarray
+    :param y_test: (Optional) Label of cluster for each test sample
+    :type y_test: list or np.ndarray
+    :param projection: (Optional) Plot in either 2D or 3D space (True = Plot in 3D)
+    :type projection: bool
+    :return: Matplotlib figure and axis object
+    """
 
-    train_samples = int(test_split * samples)
-    shape = 1
-    data1 = np.random.normal(loc=3, scale=1, size=(samples, shape))
-    data2 = np.random.normal(loc=-3, scale=1, size=(samples, shape))
-    data3 = np.random.normal(loc=-10, scale=1, size=(samples, shape))
-    data4 = np.random.normal(loc=10, scale=1, size=(samples, shape))
-    X_train = np.vstack(
-        (
-            data1[:train_samples],
-            data2[:train_samples],
-            data3[:train_samples],
-            data4[:train_samples],
-        )
-    )
-    X_test = np.vstack(
-        (
-            data1[train_samples:],
-            data2[train_samples:],
-            data3[train_samples:],
-            data4[train_samples:],
-        )
-    )
+    assert X_train is not None
+    assert isinstance(X_train, (np.ndarray, list))
+    assert isinstance(projection, bool)
 
-    kmeans = KMeans(clusters=8)
+    if isinstance(X_train, list):
+        X_train = np.array(X_train)
 
-    kmeans.fit(X_train)
-    y_train = kmeans.predict(X_train)
-    y_test = kmeans.predict(X_test)
-    fig, ax = kmeans.plot(X_train, X_test, y_train, y_test)
-    ax.set_title("1D Without Mean Splitting")
+    if X_test is not None:
+        assert isinstance(X_test, (np.ndarray, list))
+        if isinstance(X_test, list):
+            X_test = np.array(X_test)
 
-    kmeans.fit(X_train, mean_splitting = True)
-    y_train = kmeans.predict(X_train)
-    y_test = kmeans.predict(X_test)
-    fig, ax = kmeans.plot(X_train, X_test, y_train, y_test)
-    ax.set_title("1D With Mean Splitting")
-    plt.show()
+    if y_train is not None:
+        assert isinstance(y_train, (np.ndarray, list))
+        if isinstance(y_train, list):
+            y_train = np.array(y_train)
 
+    if y_test is not None:
+        assert isinstance(y_test, (np.ndarray, list))
+        if isinstance(y_test, list):
+            y_test = np.array(y_test)
 
-def plot_2D(samples, test_split):
+    dimension = X_train.shape[1]
+    if X_test is not None:
+        assert dimension == X_test.shape[1]
+    assert 1 <= dimension <= 3
 
-    train_samples = int(test_split * samples)
-    shape = 2
-    data1 = np.random.normal(loc=-3, scale=1, size=(samples, shape))
-    data2 = np.random.normal(loc=3, scale=1, size=(samples, shape))
-    data3 = np.vstack((data1[:, 0], data2[:, 1])).T
-    data4 = np.vstack((data2[:, 0], data1[:, 1])).T
+    fig = plt.figure()
+    if dimension == 1:
+        ax = fig.add_subplot(projection="3d" if projection else "rectilinear")
+        for index, centroid in enumerate(centroids):
+            cluster = X_train[y_train == index]
+            train = ax.scatter(cluster[:, 0], np.zeros(cluster.shape[0]))
+            ax.scatter(
+                centroid[0],
+                np.zeros(centroid.shape[0]),
+                s=200,
+                c=train.get_edgecolor(),
+            )
+            if X_test is not None:
+                cluster = X_test[y_test == index]
+                ax.scatter(
+                    cluster[:, 0],
+                    np.zeros(cluster.shape[0]),
+                    marker="x",
+                    c=train.get_edgecolor(),
+                )
 
-    X_train = np.vstack(
-        (
-            data1[:train_samples],
-            data2[:train_samples],
-            data3[:train_samples],
-            data4[:train_samples],
-        )
-    )
-    X_test = np.vstack(
-        (
-            data1[train_samples:],
-            data2[train_samples:],
-            data3[train_samples:],
-            data4[train_samples:],
-        )
-    )
+    elif dimension == 2:
+        ax = fig.add_subplot(projection="3d" if projection else "rectilinear")
+        for index, centroid in enumerate(centroids):
+            cluster = X_train[y_train == index]
+            train = ax.scatter(cluster[:, 0], cluster[:, 1])
+            ax.scatter(centroid[0], centroid[1], s=200, c=train.get_edgecolor())
+            if X_test is not None:
+                cluster = X_test[y_test == index]
+                ax.scatter(
+                    cluster[:, 0],
+                    cluster[:, 1],
+                    marker="x",
+                    c=train.get_edgecolor(),
+                )
+    else:
+        ax = fig.add_subplot(projection="3d")
+        for index, centroid in enumerate(centroids):
+            cluster = X_train[y_train == index]
+            train = ax.scatter(cluster[:, 0], cluster[:, 1], cluster[:, 2])
+            ax.scatter(
+                centroid[0],
+                centroid[1],
+                centroid[2],
+                s=200,
+                c=train.get_edgecolor(),
+            )
+            if X_test is not None:
+                cluster = X_test[y_test == index]
+                ax.scatter(
+                    cluster[:, 0],
+                    cluster[:, 1],
+                    cluster[:, 2],
+                    marker="x",
+                    c=train.get_edgecolor(),
+                )
 
-    kmeans = KMeans(clusters=8)
-    kmeans.fit(X_train)
-    y_train = kmeans.predict(X_train)
-    y_test = kmeans.predict(X_test)
-    fig, ax = kmeans.plot(X_train, X_test, y_train, y_test)
-    ax.set_title("2D Without Mean Splitting")
+    ax.legend(
+        ["Train Samples", "Centroids", "Test Samples"]
+    ) if X_test is not None else ax.legend([" Samples", "Centroids"])
 
-    kmeans.fit(X_train, mean_splitting = True)
-    y_train = kmeans.predict(X_train)
-    y_test = kmeans.predict(X_test)
-    fig, ax = kmeans.plot(X_train, X_test, y_train, y_test)
-    ax.set_title("2D With Mean Splitting")
-    plt.show()
-
-
-def plot_3D(samples, test_split):
-
-    mean = np.array([10, -10, -10])
-    cov = np.eye(3) * 5
-    train_samples = int(test_split * samples)
-    data1 = np.random.multivariate_normal(mean=mean, cov=cov, size=samples)
-    data2 = np.random.multivariate_normal(mean=-mean, cov=cov, size=samples)
-    data3 = np.vstack((data1[:, 0], data2[:, 1], data1[:, 2])).T
-    data4 = np.vstack((data2[:, 0], data1[:, 1], data2[:, 2])).T
-
-    X_train = np.vstack(
-        (
-            data1[:train_samples],
-            data2[:train_samples],
-            data3[:train_samples],
-            data4[:train_samples],
-        )
-    )
-    X_test = np.vstack(
-        (
-            data1[train_samples:],
-            data2[train_samples:],
-            data3[train_samples:],
-            data4[train_samples:],
-        )
-    )
-
-    kmeans = KMeans(clusters=8)
-    kmeans.fit(X_train)
-    y_train = kmeans.predict(X_train)
-    y_test = kmeans.predict(X_test)
-    fig, ax = kmeans.plot(X_train, X_test, y_train, y_test)
-    ax.set_title("3D Without Mean Splitting")
-
-    kmeans.fit(X_train, mean_splitting = True)
-    y_train = kmeans.predict(X_train)
-    y_test = kmeans.predict(X_test)
-    fig, ax = kmeans.plot(X_train, X_test, y_train, y_test)
-    ax.set_title("3D With Mean Splitting")
-    plt.show()
-
-
-if __name__ == "__main__":
-    # For reproducibility, use random seed 1
-    # np.random.seed(1)
-    plot_1D(samples=100, test_split=0.5)
-    plot_2D(samples=100, test_split=0.5)
-    plot_3D(samples=200, test_split=0.5)
+    leg = ax.get_legend()
+    for handle in leg.legendHandles:
+        handle.set_color("brown")
+    return fig, ax
