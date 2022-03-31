@@ -80,7 +80,7 @@ class KMeans:
         """
         Performs the k-means clustering algorithm. If a cluster has no samples, randomly reinitialize a new centroid
 
-        :param X: The training set to cluster, a numpy array of shape (N, D) containing N examples with D dimensions 
+        :param X: The training set to cluster, a numpy array of shape (N, D) containing N examples with D dimensions
         :type X: np.array
         :return: Centroids of K clusters, numpy array of shape (K,D) containing K clusters with D dimensions
         :rtype: np.array
@@ -129,7 +129,7 @@ class KMeans:
         :type X: list or np.array
         :return: The labels of the closest centroids of shape (N,)
         :rtype: np.array
-        """        
+        """
         """
         The predict function is used to predict the label of a new data point.
         The predict function takes in an array of data points, where each data point is a row vector.
@@ -181,14 +181,13 @@ class KMeans:
         assert X_train is not None
         assert isinstance(X_train, (np.ndarray, list))
         assert isinstance(projection, bool)
-        
+
         if X_test is not None:
             assert isinstance(X_test, (np.ndarray, list))
         if y_train is not None:
             assert isinstance(y_train, (np.ndarray, list))
         if y_test is not None:
             assert isinstance(y_test, (np.ndarray, list))
-        
 
         if isinstance(X_train, list):
             X_train = np.array(X_train)
