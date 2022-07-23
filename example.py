@@ -5,7 +5,6 @@ import numpy as np
 from matplotlib import pyplot as plt
 from plot import plot
 
-
 def plot_1D(samples, test_split):
     train_samples = int(test_split * samples)
     shape = 1
